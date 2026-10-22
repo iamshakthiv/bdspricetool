@@ -3,270 +3,180 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Size & Price Calculator</title>
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
+      padding: 24px 16px;
       font-family: Arial, sans-serif;
-      background: #f4f6fb;
-      color: #172033;
+      background: #f3f5f9;
+      color: #182235;
     }
-    header {
-      background: #172033;
-      color: white;
-      padding: 28px 20px;
-      text-align: center;
-    }
-    header h1 { margin: 0 0 8px; }
-    header p { margin: 0; color: #cbd5e1; }
-    main { max-width: 900px; margin: 28px auto; padding: 0 16px; }
-    .card {
+    main {
+      max-width: 650px;
+      margin: 30px auto;
       background: white;
-      padding: 24px;
-      margin-bottom: 20px;
-      border-radius: 14px;
-      box-shadow: 0 4px 18px #1720330c;
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px #18223512;
     }
-    h2 { margin-top: 0; font-size: 20px; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
+    h1 { margin-top: 0; }
+    .intro { color: #667085; line-height: 1.6; }
+    label {
+      display: block;
+      margin: 18px 0 7px;
+      font-weight: 600;
     }
-    label { display: block; font-size: 14px; margin-bottom: 7px; }
     input, select {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #ccd3df;
+      padding: 13px;
+      border: 1px solid #cbd2df;
       border-radius: 8px;
-      background: white;
-      color: #172033;
       font-size: 16px;
+      background: white;
     }
     .result {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 12px;
       background: #eef4ff;
-      padding: 16px;
-      border-radius: 10px;
-      margin-top: 18px;
-      line-height: 1.8;
+      line-height: 1.9;
+      overflow-wrap: anywhere;
     }
-    .result strong { color: #1748ad; }
-    .muted { color: #64748b; font-size: 13px; }
-    footer { text-align: center; padding: 20px; color: #64748b; }
-    @media (max-width: 550px) {
-      .grid { grid-template-columns: 1fr; }
-      .card { padding: 18px; }
+    .total {
+      font-size: 27px;
+      font-weight: 700;
+      color: #1748ad;
     }
+    .formula {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #526078;
+    }
+    .hint { color: #667085; font-size: 13px; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Size & Price Calculator</h1>
-    <p>Convert measurements, calculate dimensions, and estimate prices.</p>
-  </header>
-
   <main>
-    <section class="card">
-      <h2>1. Measurement Converter</h2>
-      <div class="grid">
-        <div>
-          <label for="convertValue">Enter measurement</label>
-          <input id="convertValue" type="number" min="0" step="any" value="100">
-        </div>
-        <div>
-          <label for="convertUnit">Convert from</label>
-          <select id="convertUnit">
-            <option value="mm">Millimeters (mm)</option>
-            <option value="cm">Centimeters (cm)</option>
-            <option value="m" selected>Meters (m)</option>
-            <option value="in">Inches (in)</option>
-            <option value="ft">Feet (ft)</option>
-          </select>
-        </div>
-      </div>
-      <div class="result" id="conversionResult" aria-live="polite"></div>
-    </section>
+    <h1>Size & Price Calculator</h1>
+    <p class="intro">
+      Enter your dimensions and custom price per square foot
+      to calculate the total price instantly.
+    </p>
 
-    <section class="card">
-      <h2>2. Size & Area Calculator</h2>
-      <div class="grid">
-        <div>
-          <label for="width">Width</label>
-          <input id="width" type="number" min="0" step="any" value="2">
-        </div>
-        <div>
-          <label for="height">Height</label>
-          <input id="height" type="number" min="0" step="any" value="3">
-        </div>
-        <div>
-          <label for="dimensionUnit">Dimension unit</label>
-          <select id="dimensionUnit">
-            <option value="mm">Millimeters (mm)</option>
-            <option value="cm">Centimeters (cm)</option>
-            <option value="m" selected>Meters (m)</option>
-            <option value="in">Inches (in)</option>
-            <option value="ft">Feet (ft)</option>
-          </select>
-        </div>
-      </div>
-      <div class="result" id="areaResult" aria-live="polite"></div>
-    </section>
+    <label for="width">Width</label>
+    <input id="width" type="number" min="0" step="any" value="10">
 
-    <section class="card">
-      <h2>3. Price Calculator</h2>
-      <div class="grid">
-        <div>
-          <label for="rate">Price per square unit</label>
-          <input id="rate" type="number" min="0" step="any" value="10">
-        </div>
-        <div>
-          <label for="currency">Currency</label>
-          <select id="currency">
-            <option value="INR">INR (₹)</option>
-            <option value="GBP">GBP (£)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="USD">USD ($)</option>
-            <option value="AUD">AUD (A$)</option>
-            <option value="NZD">NZD (NZ$)</option>
-          </select>
-        </div>
-        <div>
-          <label for="priceAreaUnit">Rate is per</label>
-          <select id="priceAreaUnit">
-            <option value="m2">Square meter (m²)</option>
-            <option value="ft2">Square foot (ft²)</option>
-          </select>
-        </div>
+    <label for="height">Height</label>
+    <input id="height" type="number" min="0" step="any" value="8">
+
+    <label for="unit">Dimension unit</label>
+    <select id="unit">
+      <option value="ft">Feet</option>
+      <option value="in">Inches</option>
+      <option value="m">Meters</option>
+      <option value="cm">Centimeters</option>
+      <option value="mm">Millimeters</option>
+    </select>
+
+    <label for="rate">Custom price per square foot</label>
+    <input id="rate" type="number" min="0" step="any" value="25">
+
+    <label for="currency">Currency</label>
+    <select id="currency">
+      <option value="INR">INR (₹)</option>
+      <option value="GBP">GBP (£)</option>
+      <option value="EUR">EUR (€)</option>
+      <option value="USD">USD ($)</option>
+      <option value="AUD">AUD (A$)</option>
+      <option value="NZD">NZD (NZ$)</option>
+    </select>
+
+    <section class="result" aria-live="polite">
+      <div>Area: <strong id="area">80.00 sq ft</strong></div>
+      <div>Price per sq ft: <strong id="displayRate">₹25.00</strong></div>
+      <div>Total price</div>
+      <div class="total" id="total">₹2,000.00</div>
+      <div class="formula" id="formula">
+        10 ft × 8 ft = 80 sq ft<br>
+        80 sq ft × ₹25.00 = ₹2,000.00
       </div>
-      <div class="result" id="priceResult" aria-live="polite"></div>
-      <p class="muted">Estimates use the entered rate and rectangular dimensions. Additional charges are not included.</p>
     </section>
+    <p class="hint">
+      The calculator converts dimensions to square feet before
+      applying your custom rate. No extra charges are included.
+    </p>
   </main>
 
-  <footer>Size & Price Calculator · Initial version</footer>
-
   <script>
-    const units = {
-      mm: { name: "Millimeters", factor: 0.001 },
-      cm: { name: "Centimeters", factor: 0.01 },
-      m:  { name: "Meters", factor: 1 },
-      in: { name: "Inches", factor: 0.0254 },
-      ft: { name: "Feet", factor: 0.3048 }
+    const factorsToFeet = {
+      ft: 1,
+      in: 1 / 12,
+      m: 3.280839895,
+      cm: 1 / 30.48,
+      mm: 1 / 304.8
     };
 
-    const fmt = (n, digits = 4) =>
-      n.toLocaleString("en-US", { maximumFractionDigits: digits });
+    const $ = id => document.getElementById(id);
 
-    function numberValue(id) {
-      const raw = document.getElementById(id).value.trim();
-      if (raw === "") return null;
-      const value = Number(raw);
-      return Number.isFinite(value) && value >= 0 ? value : null;
+    function formatMoney(value, currency) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(value);
     }
 
-    function updateConversion() {
-      const value = numberValue("convertValue");
-      const unit = document.getElementById("convertUnit").value;
-      const output = document.getElementById("conversionResult");
+    function calculate() {
+      const width = $("width").value.trim();
+      const height = $("height").value.trim();
+      const rateInput = $("rate").value.trim();
+      const unit = $("unit").value;
+      const currency = $("currency").value;
 
-      if (value === null) {
-        output.textContent = "Enter a valid non-negative measurement.";
+      const w = Number(width);
+      const h = Number(height);
+      const rate = Number(rateInput);
+
+      if (
+        width === "" || height === "" || rateInput === "" ||
+        !Number.isFinite(w) || !Number.isFinite(h) ||
+        !Number.isFinite(rate) || w < 0 || h < 0 || rate < 0
+      ) {
+        $("area").textContent = "—";
+        $("displayRate").textContent = "—";
+        $("total").textContent = "Enter valid non-negative values";
+        $("formula").textContent = "Check the width, height, and price inputs.";
         return;
       }
 
-      const meters = value * units[unit].factor;
-      output.innerHTML = `
-        <strong>${fmt(meters * 1000)} mm</strong><br>
-        ${fmt(meters * 100)} cm<br>
-        ${fmt(meters)} m<br>
-        ${fmt(meters / 0.0254)} in<br>
-        ${fmt(meters / 0.3048)} ft
-      `;
+      const widthFt = w * factorsToFeet[unit];
+      const heightFt = h * factorsToFeet[unit];
+      const areaSqFt = widthFt * heightFt;
+      const total = areaSqFt * rate;
+
+      $("area").textContent =
+        areaSqFt.toLocaleString("en-US", { maximumFractionDigits: 4 }) +
+        " sq ft";
+      $("displayRate").textContent = formatMoney(rate, currency);
+      $("total").textContent = formatMoney(total, currency);
+
+      $("formula").innerHTML =
+        `${w} ${unit} × ${h} ${unit} = ` +
+        `${areaSqFt.toLocaleString("en-US", { maximumFractionDigits: 4 })} sq ft<br>` +
+        `${areaSqFt.toLocaleString("en-US", { maximumFractionDigits: 4 })} sq ft × ` +
+        `${formatMoney(rate, currency)} = ${formatMoney(total, currency)}`;
     }
 
-    function getDimensions() {
-      const width = numberValue("width");
-      const height = numberValue("height");
-      const unit = document.getElementById("dimensionUnit").value;
-
-      if (width === null || height === null) return null;
-
-      const widthM = width * units[unit].factor;
-      const heightM = height * units[unit].factor;
-
-      return {
-        widthM,
-        heightM,
-        areaM2: widthM * heightM
-      };
-    }
-
-    function updateArea() {
-      const dimensions = getDimensions();
-      const output = document.getElementById("areaResult");
-
-      if (!dimensions) {
-        output.textContent = "Enter valid non-negative width and height.";
-        return;
-      }
-
-      output.innerHTML = `
-        Width: ${fmt(dimensions.widthM)} m<br>
-        Height: ${fmt(dimensions.heightM)} m<br>
-        Area: <strong>${fmt(dimensions.areaM2)} m²</strong><br>
-        Area: <strong>${fmt(dimensions.areaM2 / 0.09290304)} ft²</strong>
-      `;
-    }
-
-    function updatePrice() {
-      const dimensions = getDimensions();
-      const rate = numberValue("rate");
-      const areaUnit = document.getElementById("priceAreaUnit").value;
-      const currency = document.getElementById("currency").value;
-      const output = document.getElementById("priceResult");
-
-      if (!dimensions || rate === null) {
-        output.textContent = "Enter valid dimensions and a non-negative price.";
-        return;
-      }
-
-      const area = areaUnit === "m2"
-        ? dimensions.areaM2
-        : dimensions.areaM2 / 0.09290304;
-
-      const total = area * rate;
-
-      try {
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency,
-          maximumFractionDigits: 2
-        }).format(total);
-
-        output.innerHTML = `
-          Billable area: <strong>${fmt(area)} ${areaUnit === "m2" ? "m²" : "ft²"}</strong><br>
-          Rate: ${rate} ${currency} per ${areaUnit === "m2" ? "m²" : "ft²"}<br>
-          Estimated total: <strong>${formatted}</strong>
-        `;
-      } catch {
-        output.textContent = "Unable to format the selected currency.";
-      }
-    }
-
-    function updateAll() {
-      updateConversion();
-      updateArea();
-      updatePrice();
-    }
-
-    document.querySelectorAll("input, select").forEach(element => {
-      element.addEventListener("input", updateAll);
-      element.addEventListener("change", updateAll);
+    document.querySelectorAll("input, select").forEach(el => {
+      el.addEventListener("input", calculate);
+      el.addEventListener("change", calculate);
     });
 
-    updateAll();
+    calculate();
   </script>
 </body>
 </html>
