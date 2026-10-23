@@ -2,271 +2,228 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Size & Price Calculator</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6fb;
-      color: #172033;
-    }
-    header {
-      background: #172033;
-      color: white;
-      padding: 28px 20px;
-      text-align: center;
-    }
-    header h1 { margin: 0 0 8px; }
-    header p { margin: 0; color: #cbd5e1; }
-    main { max-width: 900px; margin: 28px auto; padding: 0 16px; }
-    .card {
-      background: white;
-      padding: 24px;
-      margin-bottom: 20px;
-      border-radius: 14px;
-      box-shadow: 0 4px 18px #1720330c;
-    }
-    h2 { margin-top: 0; font-size: 20px; }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 16px;
-    }
-    label { display: block; font-size: 14px; margin-bottom: 7px; }
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ccd3df;
-      border-radius: 8px;
-      background: white;
-      color: #172033;
-      font-size: 16px;
-    }
-    .result {
-      background: #eef4ff;
-      padding: 16px;
-      border-radius: 10px;
-      margin-top: 18px;
-      line-height: 1.8;
-    }
-    .result strong { color: #1748ad; }
-    .muted { color: #64748b; font-size: 13px; }
-    footer { text-align: center; padding: 20px; color: #64748b; }
-    @media (max-width: 550px) {
-      .grid { grid-template-columns: 1fr; }
-      .card { padding: 18px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Size & Price Tool</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f2f4f8;color:#182235;font-family:Arial,sans-serif}
+header{background:#151d2e;color:white;padding:25px 18px}
+header div,main{max-width:1050px;margin:auto}
+header h1{margin:0 0 8px;font-size:28px}
+header p{margin:0;color:#cbd5e1}
+main{padding:24px 16px}
+.card{background:white;padding:24px;border-radius:14px;margin-bottom:22px;box-shadow:0 5px 20px #1822350b}
+h2{margin:0 0 8px;font-size:21px}
+h3{font-size:16px;margin:20px 0 10px}
+.sub{color:#64748b;font-size:14px;line-height:1.6;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:7px}
+input,select{width:100%;min-width:0;padding:11px;border:1px solid #cbd2df;border-radius:8px;background:white;color:#182235;font-size:15px}
+.field{min-width:0}
+small{display:block;color:#64748b;font-size:12px;margin-top:5px}
+.panel{margin-top:20px;background:#f0f5ff;border-radius:10px;padding:16px}
+.panel-title{font-weight:700;margin-bottom:12px}
+.conversions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.conversion{background:white;border-radius:8px;padding:10px;overflow-wrap:anywhere}
+.conversion span{display:block;font-size:12px;color:#64748b;margin-bottom:5px}
+.conversion strong{font-size:14px}
+.summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px}
+.metric{border:1px solid #dbe3f0;background:white;border-radius:9px;padding:13px}
+.metric span{display:block;color:#64748b;font-size:12px;margin-bottom:6px}
+.metric strong{font-size:17px;overflow-wrap:anywhere}
+.divider{border:0;border-top:1px solid #e4e8ef;margin:23px 0}
+.price-result{margin-top:18px;padding:20px;background:#151d2e;color:white;border-radius:12px}
+.price-result .label{color:#cbd5e1;font-size:13px}
+.total{font-size:32px;font-weight:700;margin:8px 0}
+.detail{color:#d3dbea;font-size:14px;line-height:1.8}
+button{padding:11px 16px;background:#2457cf;color:white;border:0;border-radius:8px;font-weight:700;cursor:pointer}
+.note{font-size:12px;color:#64748b;line-height:1.6}
+@media(max-width:650px){
+ .grid,.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .conversions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .summary{grid-template-columns:1fr}
+ .card{padding:17px}
+ header h1{font-size:24px}
+}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Size & Price Calculator</h1>
-    <p>Convert measurements, calculate dimensions, and estimate prices.</p>
-  </header>
+<header>
+<div>
+<h1>Size & Price Tool</h1>
+<p>Convert dimensions, calculate area, and estimate custom prices.</p>
+</div>
+</header>
 
-  <main>
-    <section class="card">
-      <h2>1. Measurement Converter</h2>
-      <div class="grid">
-        <div>
-          <label for="convertValue">Enter measurement</label>
-          <input id="convertValue" type="number" min="0" step="any" value="100">
-        </div>
-        <div>
-          <label for="convertUnit">Convert from</label>
-          <select id="convertUnit">
-            <option value="mm">Millimeters (mm)</option>
-            <option value="cm">Centimeters (cm)</option>
-            <option value="m" selected>Meters (m)</option>
-            <option value="in">Inches (in)</option>
-            <option value="ft">Feet (ft)</option>
-          </select>
-        </div>
-      </div>
-      <div class="result" id="conversionResult" aria-live="polite"></div>
-    </section>
+<main>
+<section class="card">
+<h2>1. Measurement Converter</h2>
+<p class="sub">Enter each dimension once. All five units update automatically. Length or depth is optional.</p>
 
-    <section class="card">
-      <h2>2. Size & Area Calculator</h2>
-      <div class="grid">
-        <div>
-          <label for="width">Width</label>
-          <input id="width" type="number" min="0" step="any" value="2">
-        </div>
-        <div>
-          <label for="height">Height</label>
-          <input id="height" type="number" min="0" step="any" value="3">
-        </div>
-        <div>
-          <label for="dimensionUnit">Dimension unit</label>
-          <select id="dimensionUnit">
-            <option value="mm">Millimeters (mm)</option>
-            <option value="cm">Centimeters (cm)</option>
-            <option value="m" selected>Meters (m)</option>
-            <option value="in">Inches (in)</option>
-            <option value="ft">Feet (ft)</option>
-          </select>
-        </div>
-      </div>
-      <div class="result" id="areaResult" aria-live="polite"></div>
-    </section>
+<div class="grid" id="measureInputs"></div>
 
-    <section class="card">
-      <h2>3. Price Calculator</h2>
-      <div class="grid">
-        <div>
-          <label for="rate">Price per square unit</label>
-          <input id="rate" type="number" min="0" step="any" value="10">
-        </div>
-        <div>
-          <label for="currency">Currency</label>
-          <select id="currency">
-            <option value="INR">INR (₹)</option>
-            <option value="GBP">GBP (£)</option>
-            <option value="EUR">EUR (€)</option>
-            <option value="USD">USD ($)</option>
-            <option value="AUD">AUD (A$)</option>
-            <option value="NZD">NZD (NZ$)</option>
-          </select>
-        </div>
-        <div>
-          <label for="priceAreaUnit">Rate is per</label>
-          <select id="priceAreaUnit">
-            <option value="m2">Square meter (m²)</option>
-            <option value="ft2">Square foot (ft²)</option>
-          </select>
-        </div>
-      </div>
-      <div class="result" id="priceResult" aria-live="polite"></div>
-      <p class="muted">Estimates use the entered rate and rectangular dimensions. Additional charges are not included.</p>
-    </section>
-  </main>
+<div class="panel">
+<div class="panel-title">Measurement Conversions</div>
+<div id="conversionTables"></div>
+<div class="summary">
+<div class="metric"><span>Surface area</span><strong id="areaFt">—</strong></div>
+<div class="metric"><span>Surface area in metric</span><strong id="areaM">—</strong></div>
+<div class="metric"><span>Volume (if depth entered)</span><strong id="volume">—</strong></div>
+</div>
+</div>
+<p class="note">Surface area uses width × height. Volume uses width × height × length/depth when supplied.</p>
+</section>
 
-  <footer>Size & Price Calculator · Initial version</footer>
+<section class="card">
+<h2>2. Standard & Custom Price Calculator</h2>
+<p class="sub">Set a standard size and its price. The tool derives the price per square foot, then applies that rate to your custom width and height.</p>
 
-  <script>
-    const units = {
-      mm: { name: "Millimeters", factor: 0.001 },
-      cm: { name: "Centimeters", factor: 0.01 },
-      m:  { name: "Meters", factor: 1 },
-      in: { name: "Inches", factor: 0.0254 },
-      ft: { name: "Feet", factor: 0.3048 }
-    };
+<h3>Standard product size and price</h3>
+<div class="grid">
+<div class="field"><label for="stdW">Standard width</label><input id="stdW" type="number" min="0" step="any" value="10"></div>
+<div class="field"><label for="stdH">Standard height</label><input id="stdH" type="number" min="0" step="any" value="8"></div>
+<div class="field"><label for="stdUnit">Dimension unit</label><select id="stdUnit"></select></div>
+<div class="field"><label for="stdPrice">Standard total price</label><input id="stdPrice" type="number" min="0" step="any" value="2000"></div>
+<div class="field"><label for="currency">Currency</label><select id="currency">
+<option value="INR">INR (₹)</option><option value="GBP">GBP (£)</option>
+<option value="EUR">EUR (€)</option><option value="USD">USD ($)</option>
+<option value="AUD">AUD (A$)</option><option value="NZD">NZD (NZ$)</option>
+</select></div>
+</div>
 
-    const fmt = (n, digits = 4) =>
-      n.toLocaleString("en-US", { maximumFractionDigits: digits });
+<div class="panel">
+<div class="panel-title">Standard pricing breakdown</div>
+<div class="detail" style="color:#182235" id="standardBreakdown"></div>
+</div>
 
-    function numberValue(id) {
-      const raw = document.getElementById(id).value.trim();
-      if (raw === "") return null;
-      const value = Number(raw);
-      return Number.isFinite(value) && value >= 0 ? value : null;
-    }
+<hr class="divider">
+<h3>Your custom product size</h3>
+<div class="grid">
+<div class="field"><label for="customW">Custom width</label><input id="customW" type="number" min="0" step="any" value="5"></div>
+<div class="field"><label for="customH">Custom height</label><input id="customH" type="number" min="0" step="any" value="6"></div>
+<div class="field"><label for="customUnit">Dimension unit</label><select id="customUnit"></select></div>
+</div>
 
-    function updateConversion() {
-      const value = numberValue("convertValue");
-      const unit = document.getElementById("convertUnit").value;
-      const output = document.getElementById("conversionResult");
+<div class="price-result" aria-live="polite">
+<div class="label">Estimated custom price</div>
+<div class="total" id="customTotal">—</div>
+<div class="detail" id="customBreakdown"></div>
+</div>
+<p class="note">Pricing is calculated from surface area (width × height). Optional length/depth is converted above but does not affect this square-foot pricing formula. No minimum charges, waste, or additional fees are included.</p>
+</section>
+</main>
 
-      if (value === null) {
-        output.textContent = "Enter a valid non-negative measurement.";
-        return;
-      }
+<script>
+const units = [
+ {id:"mm",name:"Millimeters (mm)",factor:1/304.8},
+ {id:"cm",name:"Centimeters (cm)",factor:1/30.48},
+ {id:"m",name:"Meters (m)",factor:3.280839895},
+ {id:"in",name:"Inches (in)",factor:1/12},
+ {id:"ft",name:"Feet (ft)",factor:1}
+];
+const $ = id => document.getElementById(id);
+const fmt = (n,d=4) => Number(n).toLocaleString("en-US",{maximumFractionDigits:d});
+const money = n => new Intl.NumberFormat("en-US",{
+ style:"currency",currency:$("currency").value,
+ maximumFractionDigits:2
+}).format(n);
 
-      const meters = value * units[unit].factor;
-      output.innerHTML = `
-        <strong>${fmt(meters * 1000)} mm</strong><br>
-        ${fmt(meters * 100)} cm<br>
-        ${fmt(meters)} m<br>
-        ${fmt(meters / 0.0254)} in<br>
-        ${fmt(meters / 0.3048)} ft
-      `;
-    }
+function makeMeasurementInputs(){
+ const fields=[
+  ["width","Width","10","ft"],
+  ["height","Height","8","ft"],
+  ["depth","Length / Depth (optional)","","ft"]
+ ];
+ $("measureInputs").innerHTML=fields.map(([id,label,value])=>`
+ <div class="field">
+ <label for="${id}">${label}</label>
+ <input id="${id}" type="number" min="0" step="any" value="${value}" placeholder="Enter ${label.toLowerCase()}">
+ <small>Unit for this dimension</small>
+ <select id="${id}Unit">${units.map(u=>`<option value="${u.id}" ${u.id==="ft"?"selected":""}>${u.name}</option>`).join("")}</select>
+ </div>`).join("");
 
-    function getDimensions() {
-      const width = numberValue("width");
-      const height = numberValue("height");
-      const unit = document.getElementById("dimensionUnit").value;
+ ["stdUnit","customUnit"].forEach(id=>{
+  $(id).innerHTML=units.map(u=>`<option value="${u.id}" ${u.id==="ft"?"selected":""}>${u.name}</option>`).join("");
+ });
+}
 
-      if (width === null || height === null) return null;
+function readDimension(id){
+ const raw=$(id).value.trim();
+ if(raw==="")return null;
+ const n=Number(raw);
+ if(!Number.isFinite(n)||n<0)return NaN;
+ return n*units.find(u=>u.id===$(id+"Unit").value).factor;
+}
 
-      const widthM = width * units[unit].factor;
-      const heightM = height * units[unit].factor;
+function updateMeasurements(){
+ const w=readDimension("width"),h=readDimension("height"),d=readDimension("depth");
+ const entries=[["Width",w],["Height",h],["Length / Depth",d]];
+ $("conversionTables").innerHTML=entries.map(([name,feet])=>{
+  if(feet===null)return `<h3>${name}: not entered</h3>`;
+  if(!Number.isFinite(feet))return `<h3>${name}: enter a valid non-negative value</h3>`;
+  const values=[
+   ["mm",feet*304.8],["cm",feet*30.48],["m",feet/3.280839895],
+   ["in",feet*12],["ft",feet]
+  ];
+  return `<h3>${name}</h3><div class="conversions">${values.map(([unit,val])=>
+   `<div class="conversion"><span>${unit}</span><strong>${fmt(val)} ${unit}</strong></div>`
+  ).join("")}</div>`;
+ }).join("");
 
-      return {
-        widthM,
-        heightM,
-        areaM2: widthM * heightM
-      };
-    }
+ if(!Number.isFinite(w)||!Number.isFinite(h)||w===null||h===null){
+  $("areaFt").textContent="Check dimensions";
+  $("areaM").textContent="—";$("volume").textContent="—";return;
+ }
+ const area=w*h;
+ $("areaFt").textContent=fmt(area)+" ft²";
+ $("areaM").textContent=fmt(area*0.09290304)+" m²";
+ $("volume").textContent=d===null?"Not entered":
+  Number.isFinite(d)?fmt(area*d)+" ft³":"Check depth";
+}
 
-    function updateArea() {
-      const dimensions = getDimensions();
-      const output = document.getElementById("areaResult");
+function validInput(id){
+ const raw=$(id).value.trim();
+ if(raw==="")return null;
+ const n=Number(raw);
+ return Number.isFinite(n)&&n>=0?n:NaN;
+}
 
-      if (!dimensions) {
-        output.textContent = "Enter valid non-negative width and height.";
-        return;
-      }
+function updatePricing(){
+ const sw=validInput("stdW"),sh=validInput("stdH"),sp=validInput("stdPrice");
+ const cw=validInput("customW"),ch=validInput("customH");
+ const sf=units.find(u=>u.id===$("stdUnit").value).factor;
+ const cf=units.find(u=>u.id===$("customUnit").value).factor;
 
-      output.innerHTML = `
-        Width: ${fmt(dimensions.widthM)} m<br>
-        Height: ${fmt(dimensions.heightM)} m<br>
-        Area: <strong>${fmt(dimensions.areaM2)} m²</strong><br>
-        Area: <strong>${fmt(dimensions.areaM2 / 0.09290304)} ft²</strong>
-      `;
-    }
+ if([sw,sh,sp,cw,ch].some(v=>v===null||!Number.isFinite(v))){
+  $("standardBreakdown").textContent="Enter valid non-negative standard dimensions, price, and custom dimensions.";
+  $("customTotal").textContent="—";$("customBreakdown").textContent="Check your inputs.";return;
+ }
+ const standardArea=sw*sf*sh*sf;
+ const customArea=cw*cf*ch*cf;
+ if(standardArea<=0){
+  $("standardBreakdown").textContent="Standard area must be greater than zero.";
+  $("customTotal").textContent="—";$("customBreakdown").textContent="Enter a non-zero standard width and height.";return;
+ }
+ const rate=sp/standardArea;
+ const total=customArea*rate;
+ $("standardBreakdown").innerHTML=
+  `Standard area: <strong>${fmt(standardArea)} ft²</strong><br>`+
+  `Standard price: <strong>${money(sp)}</strong><br>`+
+  `Derived rate: <strong>${money(rate)} per ft²</strong>`;
+ $("customTotal").textContent=money(total);
+ $("customBreakdown").innerHTML=
+  `Custom area: ${fmt(customArea)} ft²<br>`+
+  `Formula: ${fmt(customArea)} ft² × ${money(rate)} per ft²<br>`+
+  `Custom dimensions are converted to feet before pricing.`;
+}
 
-    function updatePrice() {
-      const dimensions = getDimensions();
-      const rate = numberValue("rate");
-      const areaUnit = document.getElementById("priceAreaUnit").value;
-      const currency = document.getElementById("currency").value;
-      const output = document.getElementById("priceResult");
-
-      if (!dimensions || rate === null) {
-        output.textContent = "Enter valid dimensions and a non-negative price.";
-        return;
-      }
-
-      const area = areaUnit === "m2"
-        ? dimensions.areaM2
-        : dimensions.areaM2 / 0.09290304;
-
-      const total = area * rate;
-
-      try {
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency,
-          maximumFractionDigits: 2
-        }).format(total);
-
-        output.innerHTML = `
-          Billable area: <strong>${fmt(area)} ${areaUnit === "m2" ? "m²" : "ft²"}</strong><br>
-          Rate: ${rate} ${currency} per ${areaUnit === "m2" ? "m²" : "ft²"}<br>
-          Estimated total: <strong>${formatted}</strong>
-        `;
-      } catch {
-        output.textContent = "Unable to format the selected currency.";
-      }
-    }
-
-    function updateAll() {
-      updateConversion();
-      updateArea();
-      updatePrice();
-    }
-
-    document.querySelectorAll("input, select").forEach(element => {
-      element.addEventListener("input", updateAll);
-      element.addEventListener("change", updateAll);
-    });
-
-    updateAll();
-  </script>
+function updateAll(){updateMeasurements();updatePricing();}
+makeMeasurementInputs();
+document.addEventListener("input",updateAll);
+document.addEventListener("change",updateAll);
+updateAll();
+</script>
 </body>
 </html>
