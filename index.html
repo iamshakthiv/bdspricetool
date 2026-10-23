@@ -113,6 +113,78 @@ button{padding:11px 16px;background:#2457cf;color:white;border:0;border-radius:8
 </div>
 <p class="note">Pricing is calculated from surface area (width × height). Optional length/depth is converted above but does not affect this square-foot pricing formula. No minimum charges, waste, or additional fees are included.</p>
 </section>
+
+<section class="card" id="rectangularCalculator">
+  <h2>3. Rectangular Price Calculator</h2>
+  <p class="sub">
+    Calculate the total surface area and estimated price of a rectangular
+    box using its length, height, and breadth or depth.
+  </p>
+
+  <h3>Standard rectangular product</h3>
+  <div class="grid">
+    <div class="field">
+      <label for="rectStdL">Standard length</label>
+      <input id="rectStdL" type="number" min="0" step="any" value="10">
+    </div>
+    <div class="field">
+      <label for="rectStdH">Standard height</label>
+      <input id="rectStdH" type="number" min="0" step="any" value="8">
+    </div>
+    <div class="field">
+      <label for="rectStdB">Standard breadth / depth</label>
+      <input id="rectStdB" type="number" min="0" step="any" value="2">
+    </div>
+    <div class="field">
+      <label for="rectStdUnit">Dimension unit</label>
+      <select id="rectStdUnit"></select>
+    </div>
+    <div class="field">
+      <label for="rectStdPrice">Standard total price</label>
+      <input id="rectStdPrice" type="number" min="0" step="any" value="464">
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">Standard pricing breakdown</div>
+    <div id="rectStdBreakdown" class="detail" style="color:#182235"></div>
+  </div>
+
+  <hr class="divider">
+
+  <h3>Your custom rectangular product</h3>
+  <div class="grid">
+    <div class="field">
+      <label for="rectCustomL">Custom length</label>
+      <input id="rectCustomL" type="number" min="0" step="any" value="5">
+    </div>
+    <div class="field">
+      <label for="rectCustomH">Custom height</label>
+      <input id="rectCustomH" type="number" min="0" step="any" value="4">
+    </div>
+    <div class="field">
+      <label for="rectCustomB">Custom breadth / depth</label>
+      <input id="rectCustomB" type="number" min="0" step="any" value="2">
+    </div>
+    <div class="field">
+      <label for="rectCustomUnit">Dimension unit</label>
+      <select id="rectCustomUnit"></select>
+    </div>
+  </div>
+
+  <div class="price-result" aria-live="polite">
+    <div class="label">Estimated custom rectangular price</div>
+    <div class="total" id="rectCustomTotal">—</div>
+    <div class="detail" id="rectCustomBreakdown"></div>
+  </div>
+
+  <p class="note">
+    Surface area includes all six faces: top, bottom, front, back, left,
+    and right. Price is estimated from the standard price per square foot.
+    Additional charges are not included.
+  </p>
+</section>
+
 </main>
 
 <script>
@@ -255,6 +327,118 @@ makeMeasurementInputs();
 document.addEventListener("input",updateAll);
 document.addEventListener("change",updateAll);
 updateAll();
+
+function initRectangularCalculator() {
+  // Reuse the same measurement units and currency as the existing tool.
+  ["rectStdUnit", "rectCustomUnit"].forEach(id => {
+    $(id).innerHTML = units.map(u =>
+      `<option value="${u.id}" ${
+        u.id === "ft" ? "selected" : ""
+      }>${u.name}</option>`
+    ).join("");
+  });
+
+  function readRectNumber(id) {
+    const raw = $(id).value.trim();
+    if (raw === "") return null;
+
+    const value = Number(raw);
+    return Number.isFinite(value) && value >= 0
+      ? value
+      : NaN;
+  }
+
+  function rectangularArea(length, height, breadth, unitId) {
+    const factor = units.find(u => u.id === unitId).factor;
+
+    // Convert every dimension to feet before calculating.
+    const L = length * factor;
+    const H = height * factor;
+    const B = breadth * factor;
+
+    return 2 * (L * H + B * H + B * L);
+  }
+
+  function updateRectangularPrice() {
+    const stdL = readRectNumber("rectStdL");
+    const stdH = readRectNumber("rectStdH");
+    const stdB = readRectNumber("rectStdB");
+    const stdPrice = readRectNumber("rectStdPrice");
+
+    const customL = readRectNumber("rectCustomL");
+    const customH = readRectNumber("rectCustomH");
+    const customB = readRectNumber("rectCustomB");
+
+    const stdUnit = $("rectStdUnit").value;
+    const customUnit = $("rectCustomUnit").value;
+
+    const stdOutput = $("rectStdBreakdown");
+    const customOutput = $("rectCustomBreakdown");
+    const totalOutput = $("rectCustomTotal");
+
+    const standardValues = [stdL, stdH, stdB, stdPrice];
+    const customValues = [customL, customH, customB];
+
+    if (
+      standardValues.some(v => v === null || !Number.isFinite(v)) ||
+      customValues.some(v => v === null || !Number.isFinite(v))
+    ) {
+      stdOutput.textContent =
+        "Enter valid non-negative standard dimensions and price.";
+      customOutput.textContent =
+        "Enter valid non-negative custom dimensions.";
+      totalOutput.textContent = "—";
+      return;
+    }
+
+    const standardArea = rectangularArea(
+      stdL, stdH, stdB, stdUnit
+    );
+
+    const customArea = rectangularArea(
+      customL, customH, customB, customUnit
+    );
+
+    if (standardArea <= 0) {
+      stdOutput.textContent =
+        "Standard surface area must be greater than zero.";
+      customOutput.textContent =
+        "Enter a valid standard box size to calculate pricing.";
+      totalOutput.textContent = "—";
+      return;
+    }
+
+    const rate = stdPrice / standardArea;
+    const estimatedPrice = customArea * rate;
+
+    stdOutput.innerHTML =
+      `Standard surface area: <strong>${fmt(standardArea)} ft²</strong><br>` +
+      `Standard total price: <strong>${money(stdPrice)}</strong><br>` +
+      `Derived rate: <strong>${money(rate)} per ft²</strong>`;
+
+    totalOutput.textContent = money(estimatedPrice);
+
+    customOutput.innerHTML =
+      `Custom surface area: <strong>${fmt(customArea)} ft²</strong><br>` +
+      `Formula: 2 × (L × H + B × H + B × L)<br>` +
+      `Estimated price: ${fmt(customArea)} ft² × ${money(rate)} per ft²`;
+  }
+
+  ["rectStdL", "rectStdH", "rectStdB", "rectStdPrice",
+   "rectCustomL", "rectCustomH", "rectCustomB",
+   "rectStdUnit", "rectCustomUnit"].forEach(id => {
+    $(id).addEventListener("input", updateRectangularPrice);
+    $(id).addEventListener("change", updateRectangularPrice);
+  });
+
+  // Currency changes in the existing calculator also update this one.
+  $("currency").addEventListener("change", updateRectangularPrice);
+
+  updateRectangularPrice();
+}
+
+initRectangularCalculator();
+ 
 </script>
 </body>
 </html>
