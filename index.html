@@ -130,31 +130,62 @@ const money = n => new Intl.NumberFormat("en-US",{
  maximumFractionDigits:2
 }).format(n);
 
-function makeMeasurementInputs(){
- const fields=[
-  ["width","Width","10","ft"],
-  ["height","Height","8","ft"],
-  ["depth","Length / Depth (optional)","","ft"]
- ];
- $("measureInputs").innerHTML=fields.map(([id,label,value])=>`
- <div class="field">
- <label for="${id}">${label}</label>
- <input id="${id}" type="number" min="0" step="any" value="${value}" placeholder="Enter ${label.toLowerCase()}">
- <small>Unit for this dimension</small>
- <select id="${id}Unit">${units.map(u=>`<option value="${u.id}" ${u.id==="ft"?"selected":""}>${u.name}</option>`).join("")}</select>
- </div>`).join("");
+function makeMeasurementInputs() {
+  const fields = [
+    ["width", "Width", "20"],
+    ["height", "Height", "20"],
+    ["depth", "Length / Depth (optional)", ""]
+  ];
 
- ["stdUnit","customUnit"].forEach(id=>{
-  $(id).innerHTML=units.map(u=>`<option value="${u.id}" ${u.id==="ft"?"selected":""}>${u.name}</option>`).join("");
- });
+  $("measureInputs").innerHTML = `
+    <div class="field">
+      <label for="width">Width</label>
+      <input id="width" type="number" min="0" step="any" value="20">
+    </div>
+    <div class="field">
+      <label for="height">Height</label>
+      <input id="height" type="number" min="0" step="any" value="20">
+    </div>
+    <div class="field">
+      <label for="depth">Length / Depth (optional)</label>
+      <input id="depth" type="number" min="0" step="any"
+        placeholder="Enter length / depth">
+    </div>
+    <div class="field" style="grid-column:1/-1">
+      <label for="measurementUnit">Unit for all dimensions</label>
+      <select id="measurementUnit">
+        ${units.map(u =>
+          `<option value="${u.id}" ${u.id === "ft" ? "selected" : ""}>${u.name}</option>`
+        ).join("")}
+      </select>
+    </div>
+  `;
+
+  ["stdUnit", "customUnit"].forEach(id => {
+    $(id).innerHTML = units.map(u =>
+      `<option value="${u.id}" ${u.id === "ft" ? "selected" : ""}>${u.name}</option>`
+    ).join("");
+  });
+
+  // Apply the same selected unit to all three dimensions.
+  $("measurementUnit").addEventListener("change", () => {
+    ["width", "height", "depth"].forEach(id => {
+      // The shared selector is used by readDimension().
+    });
+    updateAll();
+  });
 }
 
-function readDimension(id){
- const raw=$(id).value.trim();
- if(raw==="")return null;
- const n=Number(raw);
- if(!Number.isFinite(n)||n<0)return NaN;
- return n*units.find(u=>u.id===$(id+"Unit").value).factor;
+function readDimension(id) {
+  const raw = $(id).value.trim();
+
+  if (raw === "") return null;
+
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n < 0) return NaN;
+
+  const selectedUnit = $("measurementUnit").value;
+  return n * units.find(u => u.id === selectedUnit).factor;
 }
 
 function updateMeasurements(){
