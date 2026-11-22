@@ -122,55 +122,61 @@ button{padding:11px 16px;background:#2457cf;color:white;border:0;border-radius:8
   </p>
 
   <h3>Standard rectangular product</h3>
- <div class="grid">
-  <div class="field">
-    <label for="rectStdL">Standard length</label>
-    <input id="rectStdL" type="number" min="0" step="any" value="10">
+  <div class="grid">
+    <div class="field">
+      <label for="rectStdL">Standard length</label>
+      <input id="rectStdL" type="number" min="0" step="any" value="10">
+    </div>
+    <div class="field">
+      <label for="rectStdH">Standard height</label>
+      <input id="rectStdH" type="number" min="0" step="any" value="8">
+    </div>
+    <div class="field">
+      <label for="rectStdB">Standard breadth / depth</label>
+      <input id="rectStdB" type="number" min="0" step="any" value="2">
+    </div>
+    <div class="field">
+      <label for="rectStdUnit">Dimension unit</label>
+      <select id="rectStdUnit"></select>
+    </div>
+    <div class="field">
+      <label for="rectStdPrice">Standard total price</label>
+      <input id="rectStdPrice" type="number" min="0" step="any" value="464">
+    </div>
   </div>
 
-  <div class="field">
-    <label for="rectStdB">Standard width / breadth / depth</label>
-    <input id="rectStdB" type="number" min="0" step="any" value="2">
+  <div class="panel">
+    <div class="panel-title">Standard pricing breakdown</div>
+    <div id="rectStdBreakdown" class="detail" style="color:#182235"></div>
   </div>
 
-  <div class="field">
-    <label for="rectStdH">Standard height</label>
-    <input id="rectStdH" type="number" min="0" step="any" value="8">
+  <hr class="divider">
+
+  <h3>Your custom rectangular product</h3>
+  <div class="grid">
+    <div class="field">
+      <label for="rectCustomL">Custom length</label>
+      <input id="rectCustomL" type="number" min="0" step="any" value="5">
+    </div>
+    <div class="field">
+      <label for="rectCustomH">Custom height</label>
+      <input id="rectCustomH" type="number" min="0" step="any" value="4">
+    </div>
+    <div class="field">
+      <label for="rectCustomB">Custom breadth / depth</label>
+      <input id="rectCustomB" type="number" min="0" step="any" value="2">
+    </div>
+    <div class="field">
+      <label for="rectCustomUnit">Dimension unit</label>
+      <select id="rectCustomUnit"></select>
+    </div>
   </div>
 
-  <div class="field">
-    <label for="rectStdUnit">Dimension unit</label>
-    <select id="rectStdUnit"></select>
+  <div class="price-result" aria-live="polite">
+    <div class="label">Estimated custom rectangular price</div>
+    <div class="total" id="rectCustomTotal">—</div>
+    <div class="detail" id="rectCustomBreakdown"></div>
   </div>
-
-  <div class="field">
-    <label for="rectStdPrice">Standard total price</label>
-    <input id="rectStdPrice" type="number" min="0" step="any" value="464">
-  </div>
-</div>
-
-<!-- Custom rectangular product -->
-<div class="grid">
-  <div class="field">
-    <label for="rectCustomL">Custom length</label>
-    <input id="rectCustomL" type="number" min="0" step="any" value="5">
-  </div>
-
-  <div class="field">
-    <label for="rectCustomB">Custom width / breadth / depth</label>
-    <input id="rectCustomB" type="number" min="0" step="any" value="2">
-  </div>
-
-  <div class="field">
-    <label for="rectCustomH">Custom height</label>
-    <input id="rectCustomH" type="number" min="0" step="any" value="4">
-  </div>
-
-  <div class="field">
-    <label for="rectCustomUnit">Dimension unit</label>
-    <select id="rectCustomUnit"></select>
-  </div>
-</div>
 
   <p class="note">
     Surface area includes all six faces: top, bottom, front, back, left,
